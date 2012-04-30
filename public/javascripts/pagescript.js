@@ -11,8 +11,8 @@ $(document).ready(function(){
 					$('title').text(name + ": " + message);
 				};
 				now.populateVisitors = function(visitors){
-					$.each(visitors, function(key,value){
-						$('#visitors').append("<small>"+value+"</small><br/>");
+					$.each(visitors, function(key,visitor){
+						$('#visitors').append("<small>"+visitor.name+" last visited at "+visitor.lastLoggedIn+" and created at "+visitor.created+"</small><br/>");
 					});
 				};
 				now.name = prompt("What's your name?", "Anonymous");

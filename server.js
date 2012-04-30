@@ -2,7 +2,22 @@ var express = require('express')
 ,	routes = require('./routes')
 ,	visitors = []
 , app = module.exports = express.createServer();
+var mongo = require("mongoskin");
+var db = mongo.db("user:passw0rd@ds031607.mongolab.com:31607/mint");
 
+db.bind('users',{
+	put: function(user, fn){
+		this.save(user,{},fn);
+	},
+	
+	getAll: function(fn){
+		this.find(fn);
+	},
+	update: function(name,fn){
+		var nowDate = new Date().getTime();
+		this.findAndModify({"name": name},1,{lastLoggedIn: nowDate},{"new": true},fn);
+	}
+});
 
 
 app.configure(function(){
@@ -43,11 +58,22 @@ console.log("Express server listening on port %d in %s mode", app.address().port
 
 everyone.now.addName = function(name){
 	var self = this;
-	//console.log(name,self.name);
-	var index = visitors.indexOf(name);
-	if(index >= 0) visitors.splice(index,1);
-	visitors.unshift(name);
-	//console.log(visitors)
-	everyone.now.populateVisitors(visitors);
-}
+	var nowDate = new Date().getTime();
+	db.users.put({"name": name, "created": nowDate}, function(err, status){
+		if(err){
+			console.log(err);
+		}
+	});
+	/*db.users.getAll(function(err, result){
+		everyone.now.populateVisitors(result);	
+	});*/
+	
+};
+
+
+
+/*	MONGODB SETTINGS	*/
+
+
+
 
